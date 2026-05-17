@@ -1,5 +1,5 @@
 
-# Módulo de Inscripciones - Sistema de Gestión de Gimnasio
+# Módulo de Inscripciones - Sistema de Gestión de Gimnasioz
 # Responsabilidades:
 # - Gestionar inscripciones de miembros en clases.
 # - Validar cupos máximos.
