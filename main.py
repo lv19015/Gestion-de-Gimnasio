@@ -1,6 +1,7 @@
 # importaciones de módulos
 import Modulo_Inscripciones as inscripcion
 import Modulo_Clases as clases
+import modulo_miembros as miembros
 
 # MAIN.PY: Punto de entrada del sistema de gestión de gimnasio.
 while True:
@@ -14,9 +15,7 @@ while True:
 
     # MÓDULO MIEMBROS
     if opcion_principal == "1":
-
-        print("\n[MÓDULO MIEMBROS]")
-        print("CRUD en desarrollo...")
+        miembros.main()
 
     # MÓDULO CLASES
     elif opcion_principal == "2":

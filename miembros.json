@@ -12,5 +12,26 @@
         "email": "asdas@dasd.com",
         "telefono": "78994236",
         "fecha_registro": "2026-05-17 17:29:38"
+    },
+    {
+        "id": 4,
+        "nombre": "Kevin Hernandez",
+        "email": "kevin@ejemplo.com",
+        "telefono": "70000001",
+        "fecha_registro": "2026-05-17 10:00:00"
+    },
+    {
+        "id": 5,
+        "nombre": "Franklin Garcia",
+        "email": "franklin@ejemplo.com",
+        "telefono": "70000002",
+        "fecha_registro": "2026-05-17 10:00:00"
+    },
+    {
+        "id": 6,
+        "nombre": "Brenda Laínez",
+        "email": "brenda@ejemplo.com",
+        "telefono": "70000003",
+        "fecha_registro": "2026-05-17 10:00:00"
     }
 ]

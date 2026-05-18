@@ -9,17 +9,17 @@ class Clase:
         self.entrenador = entrenador
         self.horario = horario
         self.cupo_maximo = cupo_maximo
-        self.inscritos = []  # Lista de IDs de miembros inscritos
-
+        self.inscritos = []     # Lista de IDs de miembros inscritos
+    
     def cupo_disponible(self):
         return self.cupo_maximo - len(self.inscritos)
-
+    
     def inscribir_miembro(self, miembro_id):
         if self.cupo_disponible() > 0 and miembro_id not in self.inscritos:
             self.inscritos.append(miembro_id)
             return True
         return False
-
+    
     def desinscribir_miembro(self, miembro_id):
         if miembro_id in self.inscritos:
             self.inscritos.remove(miembro_id)
@@ -59,33 +59,51 @@ def buscar_clase_por_id(id_buscar):
     return None
 
 
+# ========== CLASES DE DEMOSTRACIÓN AUTOMÁTICAS (SILENCIOSAS) ==========
+
+def cargar_clases_demo_auto():
+    """Carga clases de demostración automáticamente sin mostrar mensajes"""
+    global contador_id
+    
+    if len(clases) == 0:
+        clases_demo = [
+            {"nombre": "Yoga", "entrenador": "María", "horario": 8, "cupo_maximo": 5},
+            {"nombre": "Spinning", "entrenador": "Carlos", "horario": 8, "cupo_maximo": 1},
+            {"nombre": "Crossfit", "entrenador": "Ana", "horario": 10, "cupo_maximo": 3},
+        ]
+        
+        for demo in clases_demo:
+            nueva_clase = Clase(generar_id(), demo["nombre"], demo["entrenador"], demo["horario"], demo["cupo_maximo"])
+            clases.append(nueva_clase)
+
+
 # ========== FUNCIONES CRUD ==========
 
 def crear_clase():
-    print("\n" + "=" * 40)
+    print("\n" + "="*40)
     print("        CREAR NUEVA CLASE")
-    print("=" * 40)
-
+    print("="*40)
+    
     nombre = input("Nombre de la clase: ").strip()
     while not nombre:
         print("❌ El nombre no puede estar vacío")
         nombre = input("Nombre de la clase: ").strip()
-
+    
     entrenador = input("Nombre del entrenador: ").strip()
     while not entrenador:
         print("❌ El nombre del entrenador no puede estar vacío")
         entrenador = input("Nombre del entrenador: ").strip()
-
+    
     print("\nHorario - Opciones:")
     print("  - Número entero (ej: 8 para 8:00 AM)")
     print("  - Formato HH:MM (ej: 14:30)")
     horario_input = input("Horario: ").strip()
-
+    
     try:
         horario = int(horario_input)
     except ValueError:
         horario = horario_input
-
+    
     while not validar_horario(horario):
         print("❌ Horario inválido")
         horario_input = input("Horario: ").strip()
@@ -93,27 +111,26 @@ def crear_clase():
             horario = int(horario_input)
         except ValueError:
             horario = horario_input
-
+    
     cupo = int(input("Cupo máximo: "))
     while cupo <= 0:
         print("❌ El cupo debe ser mayor a 0")
         cupo = int(input("Cupo máximo: "))
-
+    
     nueva_clase = Clase(generar_id(), nombre, entrenador, horario, cupo)
     clases.append(nueva_clase)
     print(f"\n✅ Clase '{nombre}' creada con ID {nueva_clase.id}")
 
 
 def listar_clases():
-    print("\n" + "=" * 55)
+    print("\n" + "="*55)
     print("              LISTADO DE CLASES")
-    print("=" * 55)
-
+    print("="*55)
+    
     if not clases:
         print("📭 No hay clases registradas")
-        print("   Use la opción 5 para cargar clases de demostración")
         return
-
+    
     print(f"{'ID':<5} {'Nombre':<20} {'Entrenador':<18} {'Horario':<10} {'Cupo':<10}")
     print("-" * 65)
     for c in clases:
@@ -128,26 +145,26 @@ def editar_clase():
     listar_clases()
     if not clases:
         return
-
+    
     try:
         id_editar = int(input("\nID de la clase a editar: "))
         clase = buscar_clase_por_id(id_editar)
-
+        
         if not clase:
             print("❌ Clase no encontrada")
             return
-
+        
         print(f"\n--- EDITANDO: {clase.nombre} ---")
         print("(Enter para mantener valor)")
-
+        
         nuevo_nombre = input(f"Nombre [{clase.nombre}]: ").strip()
         if nuevo_nombre:
             clase.nombre = nuevo_nombre
-
+        
         nuevo_entrenador = input(f"Entrenador [{clase.entrenador}]: ").strip()
         if nuevo_entrenador:
             clase.entrenador = nuevo_entrenador
-
+        
         nuevo_horario_input = input(f"Horario [{clase.horario}]: ").strip()
         if nuevo_horario_input:
             try:
@@ -158,7 +175,7 @@ def editar_clase():
                 clase.horario = nuevo_horario
             else:
                 print("❌ Horario inválido, se mantiene el original")
-
+        
         nuevo_cupo = input(f"Cupo máximo [{clase.cupo_maximo}]: ").strip()
         if nuevo_cupo:
             nuevo_cupo = int(nuevo_cupo)
@@ -168,9 +185,9 @@ def editar_clase():
                     if input("¿Continuar? (s/n): ").lower() != 's':
                         return
                 clase.cupo_maximo = nuevo_cupo
-
+        
         print(f"✅ Clase actualizada")
-
+        
     except ValueError:
         print("❌ ID inválido")
 
@@ -179,67 +196,26 @@ def eliminar_clase():
     listar_clases()
     if not clases:
         return
-
+    
     try:
         id_eliminar = int(input("\nID de la clase a eliminar: "))
         clase = buscar_clase_por_id(id_eliminar)
-
+        
         if not clase:
             print("❌ Clase no encontrada")
             return
-
+        
         if clase.inscritos:
             print(f"⚠️ La clase tiene {len(clase.inscritos)} miembros inscritos")
             if input("¿Eliminar de todas formas? (s/n): ").lower() != 's':
                 print("❌ Eliminación cancelada")
                 return
-
+        
         clases.remove(clase)
         print(f"✅ Clase eliminada")
-
+        
     except ValueError:
         print("❌ ID inválido")
-
-
-# ========== CLASES DE DEMOSTRACIÓN (datos de Brenda) ==========
-
-def cargar_clases_demo():
-    """Carga las mismas clases de demostración que usa el módulo de Inscripciones de Brenda"""
-
-    if len(clases) > 0:
-        print("\n⚠️ Ya existen clases en el sistema.")
-        respuesta = input("¿Desea reemplazarlas por las clases de demostración? (s/n): ").lower()
-        if respuesta != 's':
-            print("❌ Operación cancelada")
-            return
-        # Limpiar clases existentes
-        global contador_id
-        clases.clear()
-        contador_id = 1
-
-    print("\n📋 Cargando clases de demostración (datos de Brenda)...")
-
-    # Mismos datos que usa el módulo de Inscripciones
-    clases_demo = [
-        {"nombre": "Yoga", "entrenador": "María", "horario": 8, "cupo_maximo": 5},
-        {"nombre": "Spinning", "entrenador": "Carlos", "horario": 8, "cupo_maximo": 1},
-        {"nombre": "Crossfit", "entrenador": "Ana", "horario": 10, "cupo_maximo": 3},
-    ]
-
-    for demo in clases_demo:
-        nueva_clase = Clase(
-            generar_id(),
-            demo["nombre"],
-            demo["entrenador"],
-            demo["horario"],
-            demo["cupo_maximo"]
-        )
-        clases.append(nueva_clase)
-        print(
-            f"   ✅ {demo['nombre']} | Horario: {demo['horario']}:00 | Cupo: {demo['cupo_maximo']} | Entrenador: {demo['entrenador']}")
-
-    print("\n✅ Clases de demostración cargadas correctamente")
-    print("   📌 Yoga y Spinning tienen el MISMO horario (8:00) - ideal para probar choque de horario")
 
 
 # ========== FUNCIONES DE COMPATIBILIDAD (para Inscripciones) ==========
@@ -249,16 +225,14 @@ def mostrar_clases():
     print("\n========== CLASES DISPONIBLES ==========")
     if not clases:
         print("No hay clases registradas")
-        print("Use la opción 5 en el módulo de Clases para cargar clases de demostración")
         return
-
+    
     for i, c in enumerate(clases):
         if isinstance(c.horario, int):
             horario_str = f"{c.horario} AM" if c.horario < 12 else f"{c.horario} PM"
         else:
             horario_str = c.horario
-        print(
-            f"{i}. {c.nombre} | Horario: {horario_str} | Cupos: {len(c.inscritos)}/{c.cupo_maximo} | Entrenador: {c.entrenador}")
+        print(f"{i}. {c.nombre} | Horario: {horario_str} | Cupos: {len(c.inscritos)}/{c.cupo_maximo} | Entrenador: {c.entrenador}")
 
 
 def obtener_clase_por_indice(indice):
@@ -286,9 +260,9 @@ def verificar_cupo_disponible(indice_clase):
 def verificar_choque_horario(miembro_id, indice_nueva_clase):
     if not (0 <= indice_nueva_clase < len(clases)):
         return False
-
+    
     nuevo_horario = clases[indice_nueva_clase].horario
-
+    
     for clase in clases:
         if miembro_id in clase.inscritos and clase.horario == nuevo_horario:
             return True
@@ -313,21 +287,25 @@ def desinscribir_miembro_de_clase(miembro_id, indice_clase):
     return False
 
 
+# ========== MENÚ PRINCIPAL ==========
+
 def menu_clases():
+    # Cargar clases de demostración automáticamente al entrar (sin mensajes)
+    cargar_clases_demo_auto()
+    
     while True:
-        print("\n" + "=" * 50)
+        print("\n" + "="*50)
         print("           MÓDULO DE CLASES")
-        print("=" * 50)
+        print("="*50)
         print("1. Crear clase")
         print("2. Listar clases")
         print("3. Editar clase")
         print("4. Eliminar clase")
-        print("5. Cargar clases de demostración (datos de Brenda)")
-        print("6. Volver al menú principal")
-        print("=" * 50)
-
+        print("5. Volver al menú principal")
+        print("="*50)
+        
         opcion = input("\nSeleccione una opción: ")
-
+        
         if opcion == "1":
             crear_clase()
         elif opcion == "2":
@@ -337,8 +315,6 @@ def menu_clases():
         elif opcion == "4":
             eliminar_clase()
         elif opcion == "5":
-            cargar_clases_demo()
-        elif opcion == "6":
             print("\nVolviendo al menú principal...")
             break
         else:
