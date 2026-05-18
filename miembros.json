@@ -1,0 +1,16 @@
+[
+    {
+        "id": 2,
+        "nombre": "pepe",
+        "email": "asda@asjda.com",
+        "telefono": "84259874",
+        "fecha_registro": "2026-05-17 17:28:39"
+    },
+    {
+        "id": 3,
+        "nombre": "pepe",
+        "email": "asdas@dasd.com",
+        "telefono": "78994236",
+        "fecha_registro": "2026-05-17 17:29:38"
+    }
+]
