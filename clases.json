@@ -1,0 +1,162 @@
+[
+    {
+        "id": 1,
+        "nombre": "Yoga",
+        "entrenador": "Maria",
+        "horario": 8,
+        "cupo_maximo": 5,
+        "inscritos": []
+    },
+    {
+        "id": 2,
+        "nombre": "Spinning",
+        "entrenador": "Carlos",
+        "horario": 8,
+        "cupo_maximo": 1,
+        "inscritos": []
+    },
+    {
+        "id": 3,
+        "nombre": "Crossfit",
+        "entrenador": "Ana",
+        "horario": 10,
+        "cupo_maximo": 3,
+        "inscritos": []
+    },
+    {
+        "id": 4,
+        "nombre": "Pilates",
+        "entrenador": "Laura",
+        "horario": 9,
+        "cupo_maximo": 4,
+        "inscritos": []
+    },
+    {
+        "id": 5,
+        "nombre": "Zumba",
+        "entrenador": "Javier",
+        "horario": "18:30",
+        "cupo_maximo": 6,
+        "inscritos": []
+    },
+    {
+        "id": 6,
+        "nombre": "Boxeo",
+        "entrenador": "Roberto",
+        "horario": 19,
+        "cupo_maximo": 2,
+        "inscritos": []
+    },
+    {
+        "id": 7,
+        "nombre": "Natacion",
+        "entrenador": "Patricia",
+        "horario": 7,
+        "cupo_maximo": 8,
+        "inscritos": []
+    },
+    {
+        "id": 8,
+        "nombre": "Funcional",
+        "entrenador": "Luis",
+        "horario": "17:00",
+        "cupo_maximo": 5,
+        "inscritos": []
+    },
+    {
+        "id": 9,
+        "nombre": "Tai Chi",
+        "entrenador": "Chen",
+        "horario": 7,
+        "cupo_maximo": 4,
+        "inscritos": []
+    },
+    {
+        "id": 10,
+        "nombre": "Body Pump",
+        "entrenador": "Fernando",
+        "horario": "16:00",
+        "cupo_maximo": 7,
+        "inscritos": []
+    },
+    {
+        "id": 11,
+        "nombre": "GAP",
+        "entrenador": "Gabriela",
+        "horario": 11,
+        "cupo_maximo": 5,
+        "inscritos": []
+    },
+    {
+        "id": 12,
+        "nombre": "Stretching",
+        "entrenador": "Daniela",
+        "horario": 20,
+        "cupo_maximo": 4,
+        "inscritos": []
+    },
+    {
+        "id": 13,
+        "nombre": "Kickboxing",
+        "entrenador": "Miguel",
+        "horario": "20:00",
+        "cupo_maximo": 3,
+        "inscritos": []
+    },
+    {
+        "id": 14,
+        "nombre": "Aerobicos",
+        "entrenador": "Sofia",
+        "horario": 9,
+        "cupo_maximo": 6,
+        "inscritos": []
+    },
+    {
+        "id": 15,
+        "nombre": "TRX",
+        "entrenador": "Andres",
+        "horario": "15:00",
+        "cupo_maximo": 4,
+        "inscritos": []
+    },
+    {
+        "id": 16,
+        "nombre": "Yoga Avanzado",
+        "entrenador": "Mariana",
+        "horario": 17,
+        "cupo_maximo": 3,
+        "inscritos": []
+    },
+    {
+        "id": 17,
+        "nombre": "Ciclismo Indoor",
+        "entrenador": "Ricardo",
+        "horario": 6,
+        "cupo_maximo": 5,
+        "inscritos": []
+    },
+    {
+        "id": 18,
+        "nombre": "Entrenamiento Personal",
+        "entrenador": "Elena",
+        "horario": "14:00",
+        "cupo_maximo": 2,
+        "inscritos": []
+    },
+    {
+        "id": 19,
+        "nombre": "Baile Latino",
+        "entrenador": "Carmen",
+        "horario": 20,
+        "cupo_maximo": 8,
+        "inscritos": []
+    },
+    {
+        "id": 20,
+        "nombre": "Cardio Box",
+        "entrenador": "Jorge",
+        "horario": "19:30",
+        "cupo_maximo": 5,
+        "inscritos": []
+    }
+]
