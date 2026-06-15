@@ -1,0 +1,30 @@
+[
+    {
+        "id": 2,
+        "nombre": "pepe",
+        "email": "asda@asjda.com",
+        "telefono": "84259874",
+        "fecha_registro": "2026-05-17 17:28:39"
+    },
+    {
+        "id": 3,
+        "nombre": "pepe",
+        "email": "asdas@dasd.com",
+        "telefono": "78994236",
+        "fecha_registro": "2026-05-17 17:29:38"
+    },
+    {
+        "id": 4,
+        "nombre": "Kevin Hernandez",
+        "email": "kevin@ejemplo.com",
+        "telefono": "70000001",
+        "fecha_registro": "2026-05-17 10:00:00"
+    },
+    {
+        "id": 5,
+        "nombre": "Franklin Garcia",
+        "email": "franklin@ejemplo.com",
+        "telefono": "70000002",
+        "fecha_registro": "2026-05-17 10:00:00"
+    }
+]
