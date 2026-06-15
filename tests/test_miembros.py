@@ -73,8 +73,8 @@ class TestMiembrosManager(unittest.TestCase):
     
     def test_agregar_miembro_email_duplicado(self):
         """Prueba que no se puedan duplicar emails"""
-        self.manager.agregar_miembro("User1", "duplicate@test.com", "11111111")
-        resultado = self.manager.agregar_miembro("User2", "duplicate@test.com", "22222222")
+        self.manager.agregar_miembro("User Uno", "duplicate@test.com", "11111111")
+        resultado = self.manager.agregar_miembro("User Dos", "duplicate@test.com", "22222222")
         self.assertIsNone(resultado)
         self.assertEqual(len(self.manager.miembros), 1)
     
@@ -160,11 +160,39 @@ class TestMiembrosManager(unittest.TestCase):
         """Prueba obtener el siguiente ID disponible"""
         self.assertEqual(self.manager.obtener_siguiente_id(), 1)
         
-        self.manager.agregar_miembro("User1", "u1@test.com", "11111111")
-        self.manager.agregar_miembro("User2", "u2@test.com", "22222222")
+        self.manager.agregar_miembro("User Uno", "u1@test.com", "11111111")
+        self.manager.agregar_miembro("User Dos", "u2@test.com", "22222222")
         
         self.assertEqual(self.manager.obtener_siguiente_id(), 3)
     
+    def test_agregar_miembro_nombre_invalido(self):
+        """Prueba que el nombre no puede contener números o caracteres especiales"""
+        resultado = self.manager.agregar_miembro("User123", "test@test.com", "12345678")
+        self.assertIsNone(resultado)
+        resultado2 = self.manager.agregar_miembro("User#", "test@test.com", "12345678")
+        self.assertIsNone(resultado2)
+
+    def test_agregar_miembro_telefono_invalido(self):
+        """Prueba que el teléfono debe tener formato válido (solo dígitos, espacios, guiones y longitud 6-15)"""
+        # Contiene letras
+        resultado = self.manager.agregar_miembro("Test User", "test@test.com", "123-abc")
+        self.assertIsNone(resultado)
+        # Muy corto
+        resultado2 = self.manager.agregar_miembro("Test User", "test@test.com", "123")
+        self.assertIsNone(resultado2)
+        # Muy largo
+        resultado3 = self.manager.agregar_miembro("Test User", "test@test.com", "1" * 16)
+        self.assertIsNone(resultado3)
+
+    def test_agregar_miembro_email_formato_invalido(self):
+        """Prueba que el email debe cumplir un formato real (ej: usuario@dominio.com)"""
+        # Sin extensión de dominio
+        resultado = self.manager.agregar_miembro("Test User", "test@test", "12345678")
+        self.assertIsNone(resultado)
+        # Sin @ ni punto
+        resultado2 = self.manager.agregar_miembro("Test User", "testdomaincom", "12345678")
+        self.assertIsNone(resultado2)
+
     def test_persistencia_json(self):
         """Prueba que los datos se guarden correctamente en JSON"""
         self.manager.agregar_miembro("Persistente", "persist@test.com", "99999999")

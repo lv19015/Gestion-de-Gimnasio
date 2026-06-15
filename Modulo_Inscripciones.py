@@ -106,10 +106,7 @@ class InscripcionesManager:
                 raise IndexError("Clase no existe")
 
             # Ya inscrito?
-            if miembro_id not in self.inscripciones:
-                self.inscripciones[miembro_id] = []
-            
-            if clase_idx in self.inscripciones[miembro_id]:
+            if miembro_id in self.inscripciones and clase_idx in self.inscripciones[miembro_id]:
                 print(Color.YELLOW + "[Info] El miembro ya está inscrito en esta clase" + Color.RESET)
                 return
 
@@ -126,6 +123,8 @@ class InscripcionesManager:
             resultado = inscribir_miembro_en_clase(miembro_id, clase_idx)
             if resultado:
                 # Actualizar registro local
+                if miembro_id not in self.inscripciones:
+                    self.inscripciones[miembro_id] = []
                 self.inscripciones[miembro_id].append(clase_idx)
                 self.save()
                 print(Color.GREEN + "[OK] Inscripción completada" + Color.RESET)
@@ -157,6 +156,8 @@ class InscripcionesManager:
             if resultado:
                 try:
                     self.inscripciones[miembro_id].remove(clase_idx)
+                    if not self.inscripciones[miembro_id]:
+                        del self.inscripciones[miembro_id]
                 except ValueError:
                     pass
                 self.save()
@@ -170,6 +171,7 @@ class InscripcionesManager:
     # Menu interactivo
     def menu(self):
         while True:
+            self.load() # Recargar inscripciones desde archivo al inicio del bucle
             print(Color.CYAN + "\n" + "+" + "=" * 58 + "+" + Color.RESET)
             print(Color.MAGENTA + Color.BOLD + "        MODULO DE INSCRIPCIONES" + Color.RESET)
             print(Color.CYAN + "+" + "=" * 58 + "+" + Color.RESET)

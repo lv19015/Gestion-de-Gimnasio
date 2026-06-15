@@ -1,7 +1,20 @@
 import json
 import os
+import re
 from datetime import datetime
 from typing import List, Optional, Dict
+
+def validar_email_formato(email: str) -> bool:
+    patron = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return bool(re.match(patron, email))
+
+def validar_telefono_formato(telefono: str) -> bool:
+    patron = r'^\+?[0-9\s-]{6,15}$'
+    return bool(re.match(patron, telefono))
+
+def validar_nombre_formato(nombre: str) -> bool:
+    patron = r'^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$'
+    return bool(re.match(patron, nombre))
 
 class Color:
     RESET = "\033[0m"
@@ -114,8 +127,14 @@ class MiembrosManager:
         if not nombre or not nombre.strip():
             print(Color.RED + "[Error] El nombre no puede estar vacío." + Color.RESET)
             return None
-        if not email or '@' not in email:
-            print(Color.RED + "[Error] Email inválido." + Color.RESET)
+        if not validar_nombre_formato(nombre):
+            print(Color.RED + "[Error] El nombre solo debe contener letras y espacios." + Color.RESET)
+            return None
+        if not email or not validar_email_formato(email):
+            print(Color.RED + "[Error] El formato del email es inválido (ej: usuario@dominio.com)." + Color.RESET)
+            return None
+        if not telefono or not validar_telefono_formato(telefono):
+            print(Color.RED + "[Error] El formato del teléfono es inválido. Debe contener entre 6 y 15 dígitos." + Color.RESET)
             return None
         
         # Verificar email duplicado
@@ -163,17 +182,30 @@ class MiembrosManager:
             print(Color.RED + f"[Error] No se encontró miembro con ID {id_miembro}" + Color.RESET)
             return False
 
+        # 1. Validaciones previas
         if nombre and nombre.strip():
-            miembro.nombre = nombre.strip()
-        if email and email.strip():
-            if '@' not in email:
-                print(Color.RED + "[Error] Email inválido." + Color.RESET)
+            if not validar_nombre_formato(nombre):
+                print(Color.RED + "[Error] El nombre solo debe contener letras y espacios." + Color.RESET)
                 return False
-            # Verificar que el nuevo email no esté en uso por otro miembro
+        
+        if email and email.strip():
+            if not validar_email_formato(email):
+                print(Color.RED + "[Error] El formato del email es inválido (ej: usuario@dominio.com)." + Color.RESET)
+                return False
             for m in self.miembros:
                 if m.email.lower() == email.lower() and m.id != id_miembro:
                     print(Color.RED + f"[Error] El email {email} ya está en uso." + Color.RESET)
                     return False
+
+        if telefono and telefono.strip():
+            if not validar_telefono_formato(telefono):
+                print(Color.RED + "[Error] El formato del teléfono es inválido. Debe contener entre 6 y 15 dígitos." + Color.RESET)
+                return False
+
+        # 2. Aplicar cambios
+        if nombre and nombre.strip():
+            miembro.nombre = nombre.strip()
+        if email and email.strip():
             miembro.email = email.strip()
         if telefono and telefono.strip():
             miembro.telefono = telefono.strip()
@@ -192,6 +224,41 @@ class MiembrosManager:
 
         self.miembros.remove(miembro)
         if self._guardar():
+            # Limpiar de clases en memoria y clases.json
+            try:
+                import Modulo_Clases
+                modificado_clases = False
+                for c in Modulo_Clases.clases:
+                    if id_miembro in c.inscritos:
+                        c.inscritos.remove(id_miembro)
+                        modificado_clases = True
+                if modificado_clases:
+                    Modulo_Clases.guardar_clases()
+            except Exception as e:
+                print(Color.YELLOW + f"[Advertencia] No se pudo limpiar miembro de clases: {e}" + Color.RESET)
+
+            # Limpiar de inscripciones.json
+            try:
+                import Modulo_Inscripciones
+                archivo_insc = Modulo_Inscripciones.InscripcionesManager.ARCHIVO
+            except ImportError:
+                archivo_insc = "inscripciones.json"
+
+            if os.path.exists(archivo_insc):
+                try:
+                    with open(archivo_insc, "r", encoding="utf-8") as f:
+                        insc_data = json.load(f)
+                    if "inscripciones" in insc_data:
+                        str_id = str(id_miembro)
+                        if str_id in insc_data["inscripciones"]:
+                            del insc_data["inscripciones"][str_id]
+                        if id_miembro in insc_data["inscripciones"]:
+                            del insc_data["inscripciones"][id_miembro]
+                        with open(archivo_insc, "w", encoding="utf-8") as f:
+                            json.dump(insc_data, f, indent=4, ensure_ascii=False)
+                except Exception as e:
+                    print(Color.YELLOW + f"[Advertencia] No se pudo limpiar miembro de inscripciones.json: {e}" + Color.RESET)
+
             print(Color.GREEN + f"[OK] Miembro '{miembro.nombre}' eliminado." + Color.RESET)
             return True
         return False

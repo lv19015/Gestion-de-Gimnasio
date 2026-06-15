@@ -4,6 +4,7 @@
 
 import json
 import os
+from Modulo_Miembros import validar_nombre_formato
 
 ARCHIVO_CLASES = "clases.json"
 
@@ -130,13 +131,19 @@ def crear_clase():
     print(Color.CYAN + "=" * 40 + Color.RESET)
 
     nombre = input("Nombre de la clase: ").strip()
-    while not nombre:
-        print(Color.RED + "[Error] El nombre no puede estar vacio" + Color.RESET)
+    while not nombre or not validar_nombre_formato(nombre):
+        if not nombre:
+            print(Color.RED + "[Error] El nombre no puede estar vacio" + Color.RESET)
+        else:
+            print(Color.RED + "[Error] El nombre solo debe contener letras y espacios" + Color.RESET)
         nombre = input("Nombre de la clase: ").strip()
 
     entrenador = input("Nombre del entrenador: ").strip()
-    while not entrenador:
-        print(Color.RED + "[Error] El nombre del entrenador no puede estar vacio" + Color.RESET)
+    while not entrenador or not validar_nombre_formato(entrenador):
+        if not entrenador:
+            print(Color.RED + "[Error] El nombre del entrenador no puede estar vacio" + Color.RESET)
+        else:
+            print(Color.RED + "[Error] El nombre del entrenador solo debe contener letras y espacios" + Color.RESET)
         entrenador = input("Nombre del entrenador: ").strip()
 
     print(Color.YELLOW + "\nHorario - Opciones:" + Color.RESET)
@@ -157,10 +164,25 @@ def crear_clase():
         except ValueError:
             horario = horario_input
 
-    cupo = int(input("Cupo maximo: "))
-    while cupo <= 0:
-        print(Color.RED + "[Error] El cupo debe ser mayor a 0" + Color.RESET)
-        cupo = int(input("Cupo maximo: "))
+    while True:
+        try:
+            cupo = int(input("Cupo maximo: "))
+            if cupo > 0:
+                break
+            print(Color.RED + "[Error] El cupo debe ser mayor a 0" + Color.RESET)
+        except ValueError:
+            print(Color.RED + "[Error] Debe ingresar un numero entero" + Color.RESET)
+
+    # Verificar duplicados
+    clase_duplicada = False
+    for c in clases:
+        if c.nombre.lower() == nombre.lower() and c.entrenador.lower() == entrenador.lower() and c.horario == horario:
+            clase_duplicada = True
+            break
+            
+    if clase_duplicada:
+        print(Color.RED + f"[Error] Ya existe la clase '{nombre}' con el entrenador '{entrenador}' a la misma hora." + Color.RESET)
+        return
 
     nueva_clase = Clase(contador_id, nombre, entrenador, horario, cupo)
     clases.append(nueva_clase)
@@ -208,35 +230,54 @@ def editar_clase():
         print(Color.CYAN + f"\n--- EDITANDO: {clase.nombre} ---" + Color.RESET)
         print(Color.YELLOW + "(Enter para mantener valor)" + Color.RESET)
 
+        # Solicitar datos pero no mutar todavia
         nuevo_nombre = input(f"Nombre [{clase.nombre}]: ").strip()
-        if nuevo_nombre:
-            clase.nombre = nuevo_nombre
+        if nuevo_nombre and not validar_nombre_formato(nuevo_nombre):
+            print(Color.RED + "[Error] El nombre solo debe contener letras y espacios. Cancelando edicion." + Color.RESET)
+            return
 
         nuevo_entrenador = input(f"Entrenador [{clase.entrenador}]: ").strip()
-        if nuevo_entrenador:
-            clase.entrenador = nuevo_entrenador
-
+        if nuevo_entrenador and not validar_nombre_formato(nuevo_entrenador):
+            print(Color.RED + "[Error] El nombre del entrenador solo debe contener letras y espacios. Cancelando edicion." + Color.RESET)
+            return
+        
         nuevo_horario_input = input(f"Horario [{clase.horario}]: ").strip()
+        nuevo_horario = None
         if nuevo_horario_input:
             try:
                 nuevo_horario = int(nuevo_horario_input)
             except ValueError:
                 nuevo_horario = nuevo_horario_input
-            if validar_horario(nuevo_horario):
-                clase.horario = nuevo_horario
-            else:
-                print(Color.RED + "[Error] Horario invalido, se mantiene el original" + Color.RESET)
+            if not validar_horario(nuevo_horario):
+                print(Color.RED + "[Error] Horario invalido. Cancelando edicion." + Color.RESET)
+                return
 
-        nuevo_cupo = input(f"Cupo maximo [{clase.cupo_maximo}]: ").strip()
-        if nuevo_cupo:
-            nuevo_cupo = int(nuevo_cupo)
-            if nuevo_cupo > 0:
+        nuevo_cupo_input = input(f"Cupo maximo [{clase.cupo_maximo}]: ").strip()
+        nuevo_cupo = None
+        if nuevo_cupo_input:
+            try:
+                nuevo_cupo = int(nuevo_cupo_input)
+                if nuevo_cupo <= 0:
+                    print(Color.RED + "[Error] El cupo debe ser mayor a 0. Cancelando edicion." + Color.RESET)
+                    return
                 if nuevo_cupo < len(clase.inscritos):
                     print(Color.YELLOW + f"[Advertencia] Hay {len(clase.inscritos)} inscritos. El nuevo cupo es menor." + Color.RESET)
                     if input("¿Continuar? (s/n): ").lower() != 's':
-                        guardar_clases()
+                        print(Color.YELLOW + "[Info] Edicion cancelada." + Color.RESET)
                         return
-                clase.cupo_maximo = nuevo_cupo
+            except ValueError:
+                print(Color.RED + "[Error] Cupo invalido. Cancelando edicion." + Color.RESET)
+                return
+
+        # Aplicar cambios si todos los datos son validos
+        if nuevo_nombre:
+            clase.nombre = nuevo_nombre
+        if nuevo_entrenador:
+            clase.entrenador = nuevo_entrenador
+        if nuevo_horario is not None:
+            clase.horario = nuevo_horario
+        if nuevo_cupo is not None:
+            clase.cupo_maximo = nuevo_cupo
 
         if guardar_clases():
             print(Color.GREEN + "[OK] Clase actualizada" + Color.RESET)
@@ -266,9 +307,36 @@ def eliminar_clase():
                 print(Color.YELLOW + "[Info] Eliminacion cancelada" + Color.RESET)
                 return
 
+        idx = clases.index(clase)
         clases.remove(clase)
 
         if guardar_clases():
+            # Ajustar inscripciones.json para compensar el cambio de indices
+            try:
+                import Modulo_Inscripciones
+                archivo_insc = Modulo_Inscripciones.InscripcionesManager.ARCHIVO
+            except:
+                archivo_insc = "inscripciones.json"
+
+            if os.path.exists(archivo_insc):
+                try:
+                    with open(archivo_insc, "r", encoding="utf-8") as f:
+                        insc_data = json.load(f)
+                    if "inscripciones" in insc_data:
+                        nuevas_inscripciones = {}
+                        for m_id, indices in insc_data["inscripciones"].items():
+                            nuevos_indices = []
+                            for i in indices:
+                                if i < idx:
+                                    nuevos_indices.append(i)
+                                elif i > idx:
+                                    nuevos_indices.append(i - 1)
+                            nuevas_inscripciones[m_id] = nuevos_indices
+                        insc_data["inscripciones"] = nuevas_inscripciones
+                        with open(archivo_insc, "w", encoding="utf-8") as f:
+                            json.dump(insc_data, f, indent=4, ensure_ascii=False)
+                except Exception as e:
+                    print(Color.YELLOW + f"[Advertencia] No se pudo actualizar inscripciones.json: {e}" + Color.RESET)
             print(Color.GREEN + "[OK] Clase eliminada" + Color.RESET)
         else:
             print(Color.YELLOW + "[Advertencia] Clase eliminada pero no se guardo el cambio" + Color.RESET)
@@ -306,9 +374,10 @@ def verificar_cupo_disponible(indice_clase):
 def verificar_choque_horario(miembro_id, indice_nueva_clase):
     if not (0 <= indice_nueva_clase < len(clases)):
         return False
-    nuevo_horario = clases[indice_nueva_clase].horario
+    nueva_clase = clases[indice_nueva_clase]
+    nuevo_horario = nueva_clase.horario
     for clase in clases:
-        if miembro_id in clase.inscritos and clase.horario == nuevo_horario:
+        if clase.id != nueva_clase.id and miembro_id in clase.inscritos and clase.horario == nuevo_horario:
             return True
     return False
 
