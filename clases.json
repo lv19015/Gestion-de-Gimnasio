@@ -5,7 +5,9 @@
         "entrenador": "Maria",
         "horario": 8,
         "cupo_maximo": 5,
-        "inscritos": []
+        "inscritos": [
+            2
+        ]
     },
     {
         "id": 2,
@@ -21,7 +23,9 @@
         "entrenador": "Ana",
         "horario": 10,
         "cupo_maximo": 3,
-        "inscritos": []
+        "inscritos": [
+            2
+        ]
     },
     {
         "id": 4,
@@ -53,7 +57,9 @@
         "entrenador": "Patricia",
         "horario": 7,
         "cupo_maximo": 8,
-        "inscritos": []
+        "inscritos": [
+            2
+        ]
     },
     {
         "id": 8,
@@ -101,7 +107,9 @@
         "entrenador": "Miguel",
         "horario": "20:00",
         "cupo_maximo": 3,
-        "inscritos": []
+        "inscritos": [
+            2
+        ]
     },
     {
         "id": 14,
@@ -141,7 +149,9 @@
         "entrenador": "Elena",
         "horario": "14:00",
         "cupo_maximo": 2,
-        "inscritos": []
+        "inscritos": [
+            3
+        ]
     },
     {
         "id": 19,
@@ -149,7 +159,9 @@
         "entrenador": "Carmen",
         "horario": 20,
         "cupo_maximo": 8,
-        "inscritos": []
+        "inscritos": [
+            5
+        ]
     },
     {
         "id": 20,
